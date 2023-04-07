@@ -1,12 +1,7 @@
 import { add } from "date-fns";
-import './style.css'
-function component() {
-    const element = document.createElement('div');
+import './style.css';
+import { defaultProject } from "./default";
+import { ProjectsDisplay } from "./domController";
+
   
-    // Lodash, currently included via a script, is required for this line to work
-    element.innerHTML = "Hello";
-  
-    return element;
-  }
-  
-  document.body.appendChild(component());
+ProjectsDisplay.addAllProjects();
