@@ -19,12 +19,4 @@ export default class Todo {
         }
     };
   
-   /* formattedDueDate() {
-        return isValid(this.dueDate) ? format(this.dueDate, 'MM/dd/yy') : '';
-    }
-  
-    stringifiedDueDate() {
-        return isValid(this.dueDate) ? format(this.dueDate, 'yyyy-MM-dd') : '';
-    }*/
-  
   };

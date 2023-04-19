@@ -1,5 +1,4 @@
-import Todo from "./todo";
-import addEventListeners from "./eventListeners";
+import { todoListeners } from "./eventListeners";
 import { format } from "date-fns";
 
 const TodoDisplay = (() => {
@@ -8,22 +7,22 @@ const TodoDisplay = (() => {
         const card = document.createElement('div');
         card.className = `todo-card ${todo.priority}`;
         projTodos.appendChild(card);
-        const expandCollBtn = document.createElement('button');
-        expandCollBtn.innerHTML = `<i class="fa-solid fa-chevron-down fa-lg"></i>`;
-        expandCollBtn.className = 'expand-collapse-btn';
-        expandCollBtn.id = `exp${index}`;
+        const expCollBtn = document.createElement('button');
+        expCollBtn.innerHTML = `<i class="fa-solid fa-chevron-down fa-lg"></i>`;
+        expCollBtn.className = 'expand-collapse-btn';
+        expCollBtn.id = `exp${index}`;
     
-        card.appendChild(primaryContent(todo, index));
+        card.appendChild(titleElement(todo, index));
         card.appendChild(dateElement(todo, index));
-        card.appendChild(expandCollBtn);
+        card.appendChild(expCollBtn);
         card.appendChild(collapsibleContent(todo, index));
         
-        addEventListeners(index);
+        todoListeners(index);
     };
 
-    const primaryContent = (todo, index) => {
-        const section = document.createElement('div');
-        section.className = 'card-primary';
+    const titleElement = (todo, index) => {
+        const container = document.createElement('div');
+        container.className = 'title-element';
         const checkBoxAndTitle = document.createElement('div');
         checkBoxAndTitle.className = 'card-checkbox-title';
         const checkBoxDiv = document.createElement('div');
@@ -42,19 +41,19 @@ const TodoDisplay = (() => {
         checkBoxAndTitle.appendChild(todoTitle);
 
         const deleteBtn = document.createElement('button');
-        deleteBtn.innerHTML = `<i class="fa-solid fa-trash fa-lg"></i>`;
+        deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can fa-lg"></i>`;
         deleteBtn.className = 'card-del-btn';
         deleteBtn.id = `del${index}`;
 
-        section.appendChild(checkBoxAndTitle);
-        section.appendChild(deleteBtn);
+        container.appendChild(checkBoxAndTitle);
+        container.appendChild(deleteBtn);
         
-        return section;
+        return container;
     }
         
     const dateElement = (todo, index) => {
         const date = document.createElement('div');
-        date.className = 'card-date';
+        date.className = 'date-element';
         date.textContent = `Due: ${todo.dueDate}`;
         date.id = `date${index}`;
         
@@ -74,9 +73,9 @@ const TodoDisplay = (() => {
         submitBtn.type = 'submit';
         submitBtn.textContent = 'Save';
        
-        form.appendChild(title(todo, index));
-        form.appendChild(dueDate(todo, index));
-        form.appendChild(priority(todo, index));
+        form.appendChild(titleInput(todo, index));
+        form.appendChild(dueDateInput(todo, index));
+        form.appendChild(priorityInput(todo, index));
         form.appendChild(submitBtn);
 
         container.appendChild(form);
@@ -84,8 +83,9 @@ const TodoDisplay = (() => {
         return container;
     };
 
-    const title = (todo, index) => {
-        const container = document.createElement('div');
+    const titleInput = (todo, index) => {
+        const line = document.createElement('div');
+        line.className = 'form-line';
         const label = document.createElement('label');
         label.for = `title${index}`;
         label.textContent = 'Title:';
@@ -96,32 +96,34 @@ const TodoDisplay = (() => {
         input.type = 'textarea';
         input.required = 'true';
        
-        container.appendChild(label);
-        container.appendChild(input);
+        line.appendChild(label);
+        line.appendChild(input);
         
-        return container;
+        return line;
     }
 
-    const dueDate = (todo, index) => {
-		const container = document.createElement("div");
+    const dueDateInput = (todo, index) => {
+		const line = document.createElement("div");
+        line.className = 'form-line';
 		const label = document.createElement("label");
 		label.for = `date${index}`;
 		label.textContent = "Due:";
         const input = document.createElement("input");
 		input.className = "edit-todo-date";
 		input.id = `date${index}`;
-		input.value = format(Date.parse(todo.dueDate), 'yyyy-MM-dd')
+		input.value = format(Date.parse(todo.dueDate), 'yyyy-MM-dd');
 		input.type = "date";
 		input.required = "true";
 
-		container.appendChild(label);
-		container.appendChild(input);
+		line.appendChild(label);
+		line.appendChild(input);
 		
-        return container;
+        return line;
 	};
 
-	const priority = (todo, index) => {
-		const container = document.createElement("div");
+	const priorityInput = (todo, index) => {
+		const line = document.createElement("div");
+        line.className = 'form-line';
 		const label = document.createElement("label");
         label.for = `priority${index}`;
 		label.textContent = "Priority:";
@@ -150,10 +152,10 @@ const TodoDisplay = (() => {
             (el) => el === todo.priority
           );
 
-        container.appendChild(label);
-		container.appendChild(select);
+        line.appendChild(label);
+		line.appendChild(select);
 
-		return container;
+		return line;
 	};
     
       return { printTodo };

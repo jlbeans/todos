@@ -1,8 +1,7 @@
 //import  { getProjects } from "./index";
 import { defaultProject} from "./default";
-import { TodoDisplay } from "./todoDisplay";
-//import Project from "./project";
-//import currentProjectListeners from "./projectEventController";
+import { newProjectListeners, currentProjectListeners } from "./eventListeners";
+import { TodoDisplay } from "./todoDisplay"; 
 
 const ProjectsDisplay = (() => {
     const projList = document.querySelector('.proj-list'),
@@ -15,21 +14,27 @@ const ProjectsDisplay = (() => {
     let currentProject;
     let currentProjIndex;
     let currentProjElement;
-    let allProjects = [defaultProject()];
+    let allProjects = [];
     
     const addAllProjects = () => {
-       createProjectList(allProjects);
+        allProjects.push(defaultProject());
+        for (let i = 0; i < allProjects.length; i++) {
+			createProjectList(allProjects[i], i);
+		}
     };
 
-    const createProjectList = (projects) => {
-        projList.innerHTML = projects
-        .map((projItem, i) => {
-            return `<li><button class='proj-btn' data-index='${i}'>${projItem.title}</button></li>`;
-        })
-        .join('');
-        document.querySelector('.proj-btn').addEventListener('click', printProject);
-    };
-
+    const createProjectList = (project, index) => {
+		let projItem = document.createElement("li");
+		let projBtn = document.createElement("button");
+		projItem.appendChild(projBtn);
+		projList.append(projItem);
+		projBtn.className = "proj-btn";
+        projBtn.dataset.index = index;
+        projBtn.id = `btn${index}`;
+		projBtn.textContent = project.title;
+		projBtn.addEventListener("click", printProject);
+	};
+    
     const printProject = (e) => {
         if (currentProjElement){
             currentProjElement.classList.remove("active-project");
@@ -38,23 +43,31 @@ const ProjectsDisplay = (() => {
         currentProject = allProjects[currentProjIndex];
         currentProjElement = e.target;
         currentProjElement.classList.add("active-project");
+        projEditBtn.style.display = 'block';
+        projDelBtn.style.display = 'block';
+        newTodoBtn.style.display = 'block';
         projTitle.textContent = currentProject.title;
         projDesc.textContent = currentProject.description;
-        projEditBtn.classList.toggle('hidden');
-        projDelBtn.classList.toggle('hidden');
-        newTodoBtn.classList.toggle('hidden');
         document.querySelector('.proj-todos').innerHTML = "";
         
         for (let i=0;i < currentProject.todos.length;i++){
             TodoDisplay.printTodo(currentProject.todos[i], i);
       };
 
-      //currentProjectListeners(currentProject);
+      currentProjectListeners(currentProject);
+    };
+
+    const addProject = (project, index) => {
+        createProjectList(project, index);
     };
 
     const removeProject = () => {
-        document.querySelector('.printed-proj').innerHTML = "";
-        projList.removeChild(getCurrentProjElement().parentNode);
+        projEditBtn.style.display = 'none';
+        projDelBtn.style.display = 'none';
+        newTodoBtn.style.display = 'none';
+        projTitle.textContent = "";
+        projDesc.textContent = "";
+        document.querySelector('.proj-todos').innerHTML = "";
     };
 
     const getCurrentProject = () => {
@@ -69,7 +82,11 @@ const ProjectsDisplay = (() => {
         return currentProjIndex;
     }
 
-    return { addAllProjects, getCurrentProject, getCurrentProjElement, getCurrentProjIndex};
+    const getAllProjects = () => {
+        return allProjects;
+    }
+
+    return { addAllProjects, getCurrentProject, getCurrentProjElement, getCurrentProjIndex, getAllProjects, addProject, removeProject};
 })();
 
 export { ProjectsDisplay };
